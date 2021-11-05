@@ -1,0 +1,4 @@
+rootProject.name = 'order'
+
+include ':commons'
+project(':commons').projectDir = new File("../../libraries/commons")
