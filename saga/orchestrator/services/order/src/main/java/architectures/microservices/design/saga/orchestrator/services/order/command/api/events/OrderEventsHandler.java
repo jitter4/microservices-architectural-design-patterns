@@ -1,6 +1,7 @@
 package architectures.microservices.design.saga.orchestrator.services.order.command.api.events;
 
 import architectures.microservices.design.saga.orchestrator.library.commons.events.OrderCompletedEvent;
+import architectures.microservices.design.saga.orchestrator.library.commons.events.compensate.OrderCanceledEvent;
 import architectures.microservices.design.saga.orchestrator.services.order.command.api.data.Order;
 import architectures.microservices.design.saga.orchestrator.services.order.command.api.data.OrderRepository;
 import org.axonframework.eventhandling.EventHandler;
@@ -27,6 +28,13 @@ public class OrderEventsHandler {
 
     @EventHandler
     public void on(OrderCompletedEvent event) {
+        Order order = this.orderRepository.findById(event.getOrderId()).get();
+        order.setOrderStatus(event.getOrderStatus());
+        this.orderRepository.save(order);
+    }
+
+    @EventHandler
+    public void on(OrderCanceledEvent event) {
         Order order = this.orderRepository.findById(event.getOrderId()).get();
         order.setOrderStatus(event.getOrderStatus());
         this.orderRepository.save(order);

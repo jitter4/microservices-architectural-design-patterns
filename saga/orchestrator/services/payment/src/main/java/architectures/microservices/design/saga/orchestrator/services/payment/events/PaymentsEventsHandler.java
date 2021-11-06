@@ -1,5 +1,6 @@
 package architectures.microservices.design.saga.orchestrator.services.payment.events;
 
+import architectures.microservices.design.saga.orchestrator.library.commons.events.PaymentCancelledEvent;
 import architectures.microservices.design.saga.orchestrator.library.commons.events.PaymentProcessedEvent;
 import architectures.microservices.design.saga.orchestrator.services.payment.data.Payment;
 import architectures.microservices.design.saga.orchestrator.services.payment.data.PaymentRepository;
@@ -10,12 +11,12 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
-public class PaymentsEventHandler {
+public class PaymentsEventsHandler {
 
     private final PaymentRepository paymentRepository;
 
     @Autowired
-    public PaymentsEventHandler(final PaymentRepository paymentRepository) {
+    public PaymentsEventsHandler(final PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
     }
 
@@ -27,6 +28,13 @@ public class PaymentsEventHandler {
                 .paymentStatus("COMPLETED")
                 .timeStamp(new Date())
                 .build();
+        this.paymentRepository.save(payment);
+    }
+
+    @EventHandler
+    public void on(PaymentCancelledEvent event) {
+        Payment payment = this.paymentRepository.findById(event.getPaymentId()).get();
+        payment.setPaymentStatus(event.getPaymentStatus());
         this.paymentRepository.save(payment);
     }
 }

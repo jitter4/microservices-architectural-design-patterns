@@ -1,7 +1,9 @@
 package architectures.microservices.design.saga.orchestrator.services.order.command.api.aggreagate;
 
 import architectures.microservices.design.saga.orchestrator.library.commons.comnmands.CompleteOrderCommand;
+import architectures.microservices.design.saga.orchestrator.library.commons.comnmands.compensate.CancelOrderCommand;
 import architectures.microservices.design.saga.orchestrator.library.commons.events.OrderCompletedEvent;
+import architectures.microservices.design.saga.orchestrator.library.commons.events.compensate.OrderCanceledEvent;
 import architectures.microservices.design.saga.orchestrator.services.order.command.api.commands.CreateOrderCommand;
 import architectures.microservices.design.saga.orchestrator.services.order.command.api.data.Order;
 import architectures.microservices.design.saga.orchestrator.services.order.command.api.events.OrderCreatedEvent;
@@ -57,4 +59,19 @@ public class OrderAggregate {
 //        this.orderId = event.getOrderId();
         this.orderStatus = event.getOrderStatus();
     }
+
+    @CommandHandler
+    public OrderAggregate(CancelOrderCommand command) {
+        // validate
+        OrderCanceledEvent event = new OrderCanceledEvent();
+        BeanUtils.copyProperties(command, event);
+        AggregateLifecycle.apply(event);
+    }
+
+    @EventSourcingHandler
+    public void on(CancelOrderCommand event) {
+//        this.orderId = event.getOrderId();
+        this.orderStatus = event.getOrderStatus();
+    }
+
 }
