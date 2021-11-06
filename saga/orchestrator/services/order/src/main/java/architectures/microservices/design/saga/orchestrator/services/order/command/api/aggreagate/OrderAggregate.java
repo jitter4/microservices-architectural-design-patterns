@@ -54,7 +54,7 @@ public class OrderAggregate {
 
     @EventSourcingHandler
     public void on(OrderCompletedEvent event) {
-        this.orderId = event.getOrderId();
+//        this.orderId = event.getOrderId();
         this.orderStatus = event.getOrderStatus();
     }
 }
